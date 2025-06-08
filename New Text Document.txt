@@ -1,0 +1,134 @@
+HTML:
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>To-Do List</title>
+</head>
+<body>
+  <main>
+      <h1>To-Do list</h2>
+      <input type="text" placeholder="Your task here" id="taskinput"/>
+      <button id="taskbutton">+</button>
+
+      <ul id="list"></ul>
+      
+      <script src="script.js"></script>
+  </main>
+</body>
+</html>
+
+
+CSS:
+
+
+body {margin: 10px 10px 10px 50px; font-family: helvetica; font-size: 30px; background: linear-gradient(90deg, burlywood, navy);} 
+
+input {background-color: #ADD8E6; border: 2px solid navy;}
+
+#taskbutton {background-color: #ADD8E6; border: 2px solid navy;}
+
+#taskbutton:hover {background-color: navy; color: burlywood;}
+
+.deletebutton {background-color: #ADD8E6; border: 2px solid navy;}
+
+.deletebutton:hover {background-color: navy; color: burlywood;}
+
+.listItem {list-style-type: none;}
+
+.completed {text-decoration: line-through; color: black;}
+
+#list {list-style-type: none;}
+
+
+
+JavaScript:
+
+
+
+const taskInput = document.querySelector("#taskinput");
+const taskButton = document.querySelector("#taskbutton");
+const list = document.querySelector("#list");
+
+
+function saveTasks() {
+  const tasks = [];
+  document.querySelectorAll("li").forEach(li => {
+    tasks.push({
+      text: li.firstChild.textContent,
+      completed: li.classList.contains("completed")
+    });
+  });
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function loadTasks() {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  tasks.forEach(task => {
+    const listItem = document.createElement("li");
+    listItem.textContent = task.text;
+    if (task.completed) {
+      listItem.classList.add("completed");
+    }
+
+    listItem.addEventListener("click", function() {
+      listItem.classList.toggle("completed");
+      saveTasks();
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "-";
+    deleteButton.style.marginLeft = "10px";
+    deleteButton.classList.add("deletebutton");
+
+    deleteButton.addEventListener("click", function() {
+      list.removeChild(listItem);
+      saveTasks();
+    });
+
+    listItem.appendChild(deleteButton);
+    list.appendChild(listItem);
+  });
+}
+
+
+
+taskButton.addEventListener("click", function() {
+const text = taskInput.value.trim();
+if (text !== "") {
+const listItem = document.createElement("li");
+listItem.textContent = text;
+listItem.addEventListener("click", function() {
+listItem.classList.toggle("completed");
+saveTasks();
+});
+
+
+const deleteButton = document.createElement("button");
+deleteButton.textContent = "-";
+deleteButton.style.marginLeft = "10px";
+deleteButton.classList.add("deletebutton");
+
+
+deleteButton.addEventListener("click", function() {
+list.removeChild(listItem);
+saveTasks();
+});
+
+
+listItem.appendChild(deleteButton);
+list.appendChild(listItem);
+taskInput.value = "";
+saveTasks();
+}});
+
+
+taskInput.addEventListener("keydown", function(tneve) {
+if(tneve.key === "Enter") {
+taskButton.click();}});
+
+loadTasks();
+
